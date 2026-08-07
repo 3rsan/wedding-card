@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 
 class Memory extends Model
 {
@@ -27,15 +26,10 @@ class Memory extends Model
 
     protected function mediaUrl(): Attribute
     {
-        return Attribute::get(function () {
-            if (! $this->media_path) {
-                return null;
-            }
-
-            /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
-            $disk = Storage::disk('s3');
-
-            return $disk->url($this->media_path);
-        });
+        // R2'nin public URL'i yerine kendi backend'imiz üzerinden proxy'liyoruz
+        // (bkz: .r2.dev domain'inin bazı ISP'lerde TLS seviyesinde engellenmesi)
+        return Attribute::get(fn () => $this->media_path
+            ? url('/api/media/' . $this->media_path)
+            : null);
     }
 }

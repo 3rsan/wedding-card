@@ -15,8 +15,6 @@ return [
     'allowed_origins' => [
         'http://localhost:5173',
         'https://fluffy-marshmallow-5042a9.netlify.app',
-        // Netlify domainin hazır olunca buraya ekle, örn:
-        // 'https://senin-site-adin.netlify.app',
     ],
 
     'allowed_headers' => ['*'],
