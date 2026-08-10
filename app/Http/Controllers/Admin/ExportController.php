@@ -27,8 +27,9 @@ class ExportController extends Controller
         return response()->stream(function () use ($guests) {
             $handle = fopen('php://output', 'w');
             fwrite($handle, "\xEF\xBB\xBF"); // Excel için UTF-8 BOM
+            fwrite($handle, "sep=;\n"); // Excel'e ayracın ; olduğunu söyler
 
-            fputcsv($handle, ['İsim', 'Telefon', 'Max Kişi', 'Durum', 'Katılımcı Sayısı', 'Katılımcı İsimleri', 'Not']);
+            fputcsv($handle, ['İsim', 'Telefon', 'Max Kişi', 'Durum', 'Katılımcı Sayısı', 'Katılımcı İsimleri', 'Not'], ';');
 
             foreach ($guests as $guest) {
                 $rsvp = $guest->latestRsvp();
@@ -41,7 +42,7 @@ class ExportController extends Controller
                     $rsvp?->guest_count,
                     $rsvp?->attendee_names ? implode(', ', $rsvp->attendee_names) : '',
                     $rsvp?->note,
-                ]);
+                ], ';');
             }
 
             fclose($handle);
