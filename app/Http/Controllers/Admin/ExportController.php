@@ -25,27 +25,33 @@ class ExportController extends Controller
         ];
 
         return response()->stream(function () use ($guests) {
-            $handle = fopen('php://output', 'w');
-            fwrite($handle, "\xEF\xBB\xBF"); // Excel için UTF-8 BOM
-            fwrite($handle, "sep=;\n"); // Excel'e ayracın ; olduğunu söyler
+    $handle = fopen('php://output', 'w');
 
-            fputcsv($handle, ['İsim', 'Telefon', 'Max Kişi', 'Durum', 'Katılımcı Sayısı', 'Katılımcı İsimleri', 'Not'], ';');
+    $writeRow = function (array $row) use ($handle) {
+        $converted = array_map(
+            fn ($value) => mb_convert_encoding((string) $value, 'Windows-1254', 'UTF-8'),
+            $row
+        );
+        fputcsv($handle, $converted, ';');
+    };
 
-            foreach ($guests as $guest) {
-                $rsvp = $guest->latestRsvp();
+    $writeRow(['İsim', 'Telefon', 'Max Kişi', 'Durum', 'Katılımcı Sayısı', 'Katılımcı İsimleri', 'Not']);
 
-                fputcsv($handle, [
-                    $guest->display_name,
-                    $guest->phone,
-                    $guest->max_guests,
-                    $rsvp ? ($rsvp->attending ? 'Katılıyor' : 'Katılmıyor') : 'Bekliyor',
-                    $rsvp?->guest_count,
-                    $rsvp?->attendee_names ? implode(', ', $rsvp->attendee_names) : '',
-                    $rsvp?->note,
-                ], ';');
-            }
+    foreach ($guests as $guest) {
+        $rsvp = $guest->latestRsvp();
 
-            fclose($handle);
-        }, 200, $headers);
+        $writeRow([
+            $guest->display_name,
+            $guest->phone,
+            $guest->max_guests,
+            $rsvp ? ($rsvp->attending ? 'Katılıyor' : 'Katılmıyor') : 'Bekliyor',
+            $rsvp?->guest_count,
+            $rsvp?->attendee_names ? implode(', ', $rsvp->attendee_names) : '',
+            $rsvp?->note,
+        ]);
+    }
+
+    fclose($handle);
+}, 200, $headers);
     }
 }
