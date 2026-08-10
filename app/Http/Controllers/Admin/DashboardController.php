@@ -26,6 +26,7 @@ class DashboardController extends Controller
         $totalAttendeeCount = $attending->sum(fn ($g) => $g->latestRsvp()->guest_count);
 
         return response()->json([
+            'wedding_slug' => $wedding->slug,
             'total_invited' => $totalGuests,
             'attending' => $attending->count(),
             'not_attending' => $notAttending->count(),

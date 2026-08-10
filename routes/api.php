@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\GuestController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\WeddingController as AdminWeddingController;
+use App\Http\Controllers\Admin\MemoryController as AdminMemoryController;
 use App\Http\Controllers\Admin\SettingsController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +42,11 @@ Route::prefix('admin')->group(function () {
 
             Route::get('/weddings/{wedding:id}/dashboard', [DashboardController::class, 'index']);
             Route::get('/weddings/{wedding:id}/export', [ExportController::class, 'guests']);
+
+            Route::get('/weddings/{wedding:id}/memories', [AdminMemoryController::class, 'index']);
+            Route::post('/weddings/{wedding:id}/memories/{memory}/approve', [AdminMemoryController::class, 'approve']);
+            Route::post('/weddings/{wedding:id}/memories/{memory}/reject', [AdminMemoryController::class, 'reject']);
+            Route::delete('/weddings/{wedding:id}/memories/{memory}', [AdminMemoryController::class, 'destroy']);
         });
 
         Route::middleware('role:admin')->group(function () {
@@ -48,4 +54,6 @@ Route::prefix('admin')->group(function () {
             Route::get('/settings', [SettingsController::class, 'index']);
         });
     });
+
+
 });
