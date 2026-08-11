@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Wedding extends Model
 {
     use HasFactory;
+
+    protected $appends = ['cover_image_url'];
 
     protected $fillable = [
         'slug', 'groom_name', 'bride_name', 'wedding_date', 'theme',
@@ -36,5 +39,12 @@ class Wedding extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    protected function coverImageUrl(): Attribute
+    {
+        return Attribute::get(fn () => $this->cover_image
+            ? url('/api/media/' . $this->cover_image)
+            : null);
     }
 }

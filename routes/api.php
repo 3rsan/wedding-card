@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\WeddingController as AdminWeddingController;
 use App\Http\Controllers\Admin\MemoryController as AdminMemoryController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\WeddingSettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('weddings/{slug}')->group(function () {
@@ -47,6 +48,10 @@ Route::prefix('admin')->group(function () {
             Route::post('/weddings/{wedding:id}/memories/{memory}/approve', [AdminMemoryController::class, 'approve']);
             Route::post('/weddings/{wedding:id}/memories/{memory}/reject', [AdminMemoryController::class, 'reject']);
             Route::delete('/weddings/{wedding:id}/memories/{memory}', [AdminMemoryController::class, 'destroy']);
+
+            Route::get('/weddings/{wedding:id}/settings', [WeddingSettingsController::class, 'show']);
+            Route::put('/weddings/{wedding:id}/settings', [WeddingSettingsController::class, 'update']);
+            Route::post('/weddings/{wedding:id}/settings/cover-image', [WeddingSettingsController::class, 'uploadCover']);
         });
 
         Route::middleware('role:admin')->group(function () {
