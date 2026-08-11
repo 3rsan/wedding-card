@@ -14,10 +14,13 @@ class WeddingSettingsController extends Controller
     {
         $this->authorizeWedding($request, $wedding);
 
-        return response()->json($wedding->only([
-            'id', 'slug', 'groom_name', 'bride_name', 'wedding_date',
-            'theme', 'theme_colors', 'cover_image', 'hero_video',
-        ]));
+        return response()->json([
+            ...$wedding->only([
+                'id', 'slug', 'groom_name', 'bride_name', 'wedding_date',
+                'theme', 'theme_colors', 'cover_image', 'hero_video',
+            ]),
+            'cover_image_url' => $wedding->cover_image_url,
+        ]);
     }
 
     public function update(Request $request, Wedding $wedding)
