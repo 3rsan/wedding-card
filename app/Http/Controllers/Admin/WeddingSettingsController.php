@@ -28,6 +28,9 @@ class WeddingSettingsController extends Controller
         $this->authorizeWedding($request, $wedding);
 
         $data = $request->validate([
+            'groom_name' => ['sometimes', 'string', 'max:255'],
+            'bride_name' => ['sometimes', 'string', 'max:255'],
+            'wedding_date' => ['sometimes', 'date'],
             'theme' => ['sometimes', 'string', 'in:classic,modern-minimal'],
             'theme_colors' => ['sometimes', 'array'],
             'theme_colors.primary' => ['sometimes', 'string', 'max:20'],
@@ -35,9 +38,7 @@ class WeddingSettingsController extends Controller
             'theme_colors.bg' => ['sometimes', 'string', 'max:20'],
         ]);
 
-        if (isset($data['theme'])) {
-            $wedding->theme = $data['theme'];
-        }
+        $wedding->fill(collect($data)->except('theme_colors')->toArray());
 
         if (isset($data['theme_colors'])) {
             $wedding->theme_colors = array_merge($wedding->theme_colors ?? [], $data['theme_colors']);
