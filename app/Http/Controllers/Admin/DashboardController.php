@@ -27,6 +27,8 @@ class DashboardController extends Controller
 
         return response()->json([
             'wedding_slug' => $wedding->slug,
+            'bride_name' => $wedding->bride_name,
+            'groom_name' => $wedding->groom_name,
             'total_invited' => $totalGuests,
             'attending' => $attending->count(),
             'not_attending' => $notAttending->count(),
