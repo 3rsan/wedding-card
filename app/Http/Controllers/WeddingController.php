@@ -23,6 +23,7 @@ class WeddingController extends Controller
             'theme_colors' => $wedding->theme_colors,
             'venues' => $wedding->venues,
             'cover_image' => $wedding->cover_image,
+            'cover_image_url' => $wedding->cover_image_url,
             'hero_video' => $wedding->hero_video,
         ]);
     }
