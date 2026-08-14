@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+
 use App\Models\Wedding;
 use Illuminate\Http\JsonResponse;
 
@@ -39,5 +41,12 @@ class WeddingController extends Controller
             'max_guests' => $guest->max_guests,
             'existing_rsvp' => $guest->latestRsvp(),
         ]);
+    }
+
+    public function destroy(Request $request, Wedding $wedding)
+    {
+        $wedding->delete(); // guests, rsvps, memories cascade ile silinir mi kontrol etmemiz lazım
+
+        return response()->noContent();
     }
 }
