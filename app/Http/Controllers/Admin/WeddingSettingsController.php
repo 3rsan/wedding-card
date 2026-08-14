@@ -32,7 +32,7 @@ class WeddingSettingsController extends Controller
             'groom_name' => ['sometimes', 'string', 'max:255'],
             'bride_name' => ['sometimes', 'string', 'max:255'],
             'wedding_date' => ['sometimes', 'date'],
-            'theme' => ['sometimes', 'string', 'in:classic,modern-minimal'],
+            'theme' => ['sometimes', 'string', 'in:classic,modern-minimal,vintage,botanical,luxury-dark'],
             'theme_colors' => ['sometimes', 'array'],
             'theme_colors.primary' => ['sometimes', 'string', 'max:20'],
             'theme_colors.text' => ['sometimes', 'string', 'max:20'],
