@@ -19,6 +19,7 @@ class WeddingSettingsController extends Controller
                 'id', 'slug', 'groom_name', 'bride_name', 'wedding_date',
                 'theme', 'theme_colors', 'cover_image', 'hero_video',
             ]),
+            'default_theme_colors' => $wedding->default_theme_colors,
             'cover_image_url' => $wedding->cover_image_url,
         ]);
     }
