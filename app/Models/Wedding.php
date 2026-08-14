@@ -16,7 +16,7 @@ class Wedding extends Model
     protected $fillable = [
         'slug', 'groom_name', 'bride_name', 'wedding_date', 'theme',
         'theme_colors', 'venues', 'cover_image', 'hero_video',
-        'is_published', 'owner_user_id',
+        'is_published', 'owner_user_id', 'default_theme_colors',
     ];
 
     protected $casts = [
