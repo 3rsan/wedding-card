@@ -40,6 +40,7 @@ Route::prefix('admin')->group(function () {
         Route::middleware('role:admin,couple')->group(function () {
             Route::get('/weddings/{wedding:id}/guests', [GuestController::class, 'index']);
             Route::post('/weddings/{wedding:id}/guests', [GuestController::class, 'store']);
+            Route::post('/weddings/{wedding:id}/guests/import', [GuestController::class, 'import']);
             Route::put('/weddings/{wedding:id}/guests/{guest}', [GuestController::class, 'update']);
             Route::delete('/weddings/{wedding:id}/guests/{guest}', [GuestController::class, 'destroy']);
 
