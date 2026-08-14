@@ -25,6 +25,7 @@ class ProfileController extends Controller
         }
 
         $user->update(['password' => bcrypt($data['new_password'])]);
+        $user->tokens()->delete(); // tüm token'ları geçersiz kıl, yeniden login gerekli
 
         return response()->json(['message' => 'Şifre güncellendi.']);
     }
