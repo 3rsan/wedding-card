@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Guest;
 use App\Models\Wedding;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GuestController extends Controller
 {
@@ -60,5 +61,79 @@ class GuestController extends Controller
         $guest->delete();
 
         return response()->noContent();
+    }
+
+    public function import(Request $request, Wedding $wedding)
+    {
+        $this->authorizeWedding($request, $wedding);
+
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:csv,txt', 'max:2048'],
+        ]);
+
+        $path = $request->file('file')->getRealPath();
+        $handle = fopen($path, 'r');
+
+        // İlk satırı başlık olarak oku, Excel'in ; ayracını da destekle
+        $firstLine = fgets($handle);
+        rewind($handle);
+        $delimiter = str_contains($firstLine, ';') ? ';' : ',';
+
+        $header = fgetcsv($handle, 0, $delimiter);
+        $header = array_map(fn ($h) => strtolower(trim($h)), $header);
+
+        $nameIndex = array_search('display_name', $header) !== false
+            ? array_search('display_name', $header)
+            : array_search('isim', $header);
+        $phoneIndex = array_search('phone', $header) !== false
+            ? array_search('phone', $header)
+            : array_search('telefon', $header);
+        $maxGuestsIndex = array_search('max_guests', $header) !== false
+            ? array_search('max_guests', $header)
+            : array_search('max kişi', $header);
+
+        if ($nameIndex === false) {
+            fclose($handle);
+            return response()->json([
+                'message' => 'CSV dosyasında "display_name" veya "isim" sütunu bulunamadı.',
+            ], 422);
+        }
+
+        $created = 0;
+        $skipped = 0;
+        $errors = [];
+        $rowNumber = 1;
+
+        DB::transaction(function () use ($handle, $delimiter, $nameIndex, $phoneIndex, $maxGuestsIndex, $wedding, &$created, &$skipped, &$errors, &$rowNumber) {
+            while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
+                $rowNumber++;
+
+                $displayName = trim($row[$nameIndex] ?? '');
+
+                if ($displayName === '') {
+                    $skipped++;
+                    $errors[] = "Satır {$rowNumber}: isim boş, atlandı.";
+                    continue;
+                }
+
+                $wedding->guests()->create([
+                    'display_name' => $displayName,
+                    'phone' => $phoneIndex !== false ? trim($row[$phoneIndex] ?? '') ?: null : null,
+                    'max_guests' => $maxGuestsIndex !== false && is_numeric($row[$maxGuestsIndex] ?? null)
+                        ? (int) $row[$maxGuestsIndex]
+                        : 1,
+                ]);
+
+                $created++;
+            }
+        });
+
+        fclose($handle);
+
+        return response()->json([
+            'created' => $created,
+            'skipped' => $skipped,
+            'errors' => $errors,
+        ]);
     }
 }
