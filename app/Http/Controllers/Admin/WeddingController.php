@@ -61,4 +61,11 @@ class WeddingController extends Controller
             ],
         ], 201);
     }
+
+    public function destroy(Request $request, Wedding $wedding)
+    {
+        $wedding->delete(); // guests, rsvps, memories cascade ile silinir mi kontrol etmemiz lazım
+
+        return response()->noContent();
+    }
 }
