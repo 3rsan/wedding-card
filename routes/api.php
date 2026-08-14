@@ -4,6 +4,7 @@ use App\Http\Controllers\MediaProxyController;
 use App\Http\Controllers\MemoryController;
 use App\Http\Controllers\RsvpController;
 use App\Http\Controllers\WeddingController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\Admin\GuestController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -34,6 +35,7 @@ Route::prefix('admin')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout']);
         Route::get('/me', [AdminAuthController::class, 'me']);
+        Route::put('/profile/password', [ProfileController::class, 'updatePassword']);
 
         Route::middleware('role:admin,couple')->group(function () {
             Route::get('/weddings/{wedding:id}/guests', [GuestController::class, 'index']);
