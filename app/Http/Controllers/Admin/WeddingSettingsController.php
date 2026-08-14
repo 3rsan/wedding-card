@@ -63,4 +63,13 @@ class WeddingSettingsController extends Controller
 
         return response()->json(['cover_image' => $path]);
     }
+
+    public function removeCover(Request $request, Wedding $wedding)
+    {
+        $this->authorizeWedding($request, $wedding);
+
+        $wedding->update(['cover_image' => null]);
+
+        return response()->json(['cover_image' => null]);
+    }
 }

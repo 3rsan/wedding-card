@@ -52,6 +52,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/weddings/{wedding:id}/settings', [WeddingSettingsController::class, 'show']);
             Route::put('/weddings/{wedding:id}/settings', [WeddingSettingsController::class, 'update']);
             Route::post('/weddings/{wedding:id}/settings/cover-image', [WeddingSettingsController::class, 'uploadCover']);
+            Route::delete('/weddings/{wedding:id}/settings/cover-image', [WeddingSettingsController::class, 'removeCover']);
         });
 
         Route::middleware('role:admin')->group(function () {
