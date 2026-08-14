@@ -53,6 +53,7 @@ Route::prefix('admin')->group(function () {
             Route::put('/weddings/{wedding:id}/settings', [WeddingSettingsController::class, 'update']);
             Route::post('/weddings/{wedding:id}/settings/cover-image', [WeddingSettingsController::class, 'uploadCover']);
             Route::delete('/weddings/{wedding:id}/settings/cover-image', [WeddingSettingsController::class, 'removeCover']);
+            Route::get('/weddings/{wedding:id}/memories/zip', [AdminMemoryController::class, 'downloadAll']);
         });
 
         Route::middleware('role:admin')->group(function () {

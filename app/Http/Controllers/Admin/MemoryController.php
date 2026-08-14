@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Memory;
 use App\Models\Wedding;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use ZipArchive;
 
 class MemoryController extends Controller
 {
@@ -56,5 +58,37 @@ class MemoryController extends Controller
         $memory->delete();
 
         return response()->noContent();
+    }
+
+    public function downloadAll(Request $request, Wedding $wedding)
+    {
+        $this->authorizeWedding($request, $wedding);
+
+        $memories = $wedding->memories()->whereNotNull('media_path')->get();
+
+        if ($memories->isEmpty()) {
+            return response()->json(['message' => 'İndirilecek medya yok.'], 404);
+        }
+
+        $zipFileName = "{$wedding->slug}-anilar-" . now()->format('Y-m-d') . '.zip';
+        $tempPath = storage_path("app/tmp/{$zipFileName}");
+
+        if (!is_dir(dirname($tempPath))) {
+            mkdir(dirname($tempPath), 0755, true);
+        }
+
+        $zip = new ZipArchive();
+        $zip->open($tempPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+
+        foreach ($memories as $memory) {
+            $contents = Storage::disk('s3')->get($memory->media_path);
+            $extension = pathinfo($memory->media_path, PATHINFO_EXTENSION);
+            $fileName = ($memory->first_name ?? 'misafir') . "-{$memory->id}.{$extension}";
+            $zip->addFromString($fileName, $contents);
+        }
+
+        $zip->close();
+
+        return response()->download($tempPath, $zipFileName)->deleteFileAfterSend(true);
     }
 }
