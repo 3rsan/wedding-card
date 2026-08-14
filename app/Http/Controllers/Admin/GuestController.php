@@ -80,7 +80,10 @@ class GuestController extends Controller
         $delimiter = str_contains($firstLine, ';') ? ';' : ',';
 
         $header = fgetcsv($handle, 0, $delimiter);
-        $header = array_map(fn ($h) => strtolower(trim($h)), $header);
+        $header = array_map(function ($h) {
+            $h = str_replace("\xEF\xBB\xBF", '', $h); // UTF-8 BOM temizle
+            return strtolower(trim($h));
+        }, $header);
 
         $nameIndex = array_search('display_name', $header) !== false
             ? array_search('display_name', $header)
