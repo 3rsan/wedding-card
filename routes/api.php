@@ -54,6 +54,7 @@ Route::prefix('admin')->group(function () {
             Route::post('/weddings/{wedding:id}/settings/cover-image', [WeddingSettingsController::class, 'uploadCover']);
             Route::delete('/weddings/{wedding:id}/settings/cover-image', [WeddingSettingsController::class, 'removeCover']);
             Route::get('/weddings/{wedding:id}/memories/zip', [AdminMemoryController::class, 'downloadAll']);
+            Route::post('/weddings/{wedding:id}/settings/reset-colors', [WeddingSettingsController::class, 'resetColors']);
         });
 
         Route::middleware('role:admin')->group(function () {

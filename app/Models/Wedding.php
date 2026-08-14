@@ -22,6 +22,7 @@ class Wedding extends Model
     protected $casts = [
         'wedding_date' => 'date',
         'theme_colors' => 'array',
+        'default_theme_colors' => 'array',
         'venues' => 'array',
         'is_published' => 'boolean',
     ];

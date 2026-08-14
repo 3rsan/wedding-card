@@ -43,9 +43,10 @@ class WeddingController extends Controller
                 'bride_name' => $data['bride_name'],
                 'wedding_date' => $data['wedding_date'],
                 'theme' => 'classic',
-                'theme_colors' => ['primary' => '#d4a04a', 'text' => '#2c3e50', 'bg' => '#f7f3eb'],
                 'is_published' => true,
                 'owner_user_id' => $couple->id,
+                'theme_colors' => ['primary' => '#d4a04a', 'text' => '#2c3e50', 'bg' => '#f7f3eb'],
+                'default_theme_colors' => ['primary' => '#d4a04a', 'text' => '#2c3e50', 'bg' => '#f7f3eb'],
             ]);
 
             return [$wedding, $couple];

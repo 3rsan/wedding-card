@@ -72,4 +72,14 @@ class WeddingSettingsController extends Controller
 
         return response()->json(['cover_image' => null]);
     }
+
+    public function resetColors(Request $request, Wedding $wedding)
+    {
+        $this->authorizeWedding($request, $wedding);
+
+        $wedding->theme_colors = $wedding->default_theme_colors;
+        $wedding->save();
+
+        return response()->json(['theme_colors' => $wedding->theme_colors]);
+    }
 }
