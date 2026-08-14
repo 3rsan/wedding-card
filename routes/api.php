@@ -58,6 +58,7 @@ Route::prefix('admin')->group(function () {
         Route::middleware('role:admin')->group(function () {
             Route::get('/weddings', [AdminWeddingController::class, 'index']);
             Route::post('/weddings', [AdminWeddingController::class, 'store']);
+            Route::delete('/weddings/{wedding:id}', [AdminWeddingController::class, 'destroy']);
             Route::get('/settings', [SettingsController::class, 'index']);
         });
     });
