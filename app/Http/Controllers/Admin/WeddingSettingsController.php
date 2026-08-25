@@ -17,7 +17,7 @@ class WeddingSettingsController extends Controller
         return response()->json([
             ...$wedding->only([
                 'id', 'slug', 'groom_name', 'bride_name', 'wedding_date',
-                'theme', 'theme_colors', 'cover_image', 'hero_video',
+                'theme', 'theme_colors', 'cover_image', 'hero_video', 'venues',
             ]),
             'default_theme_colors' => $wedding->default_theme_colors,
             'cover_image_url' => $wedding->cover_image_url,
@@ -37,17 +37,27 @@ class WeddingSettingsController extends Controller
             'theme_colors.primary' => ['sometimes', 'string', 'max:20'],
             'theme_colors.text' => ['sometimes', 'string', 'max:20'],
             'theme_colors.bg' => ['sometimes', 'string', 'max:20'],
+            'venues' => ['sometimes', 'array'],
+            'venues.*.type' => ['required_with:venues', 'string', 'max:50'],
+            'venues.*.label' => ['nullable', 'string', 'max:255'],
+            'venues.*.name' => ['required_with:venues', 'string', 'max:255'],
+            'venues.*.address' => ['required_with:venues', 'string', 'max:500'],
+            'venues.*.time' => ['nullable', 'string', 'max:50'],
         ]);
 
-        $wedding->fill(collect($data)->except('theme_colors')->toArray());
+        $wedding->fill(collect($data)->except('theme_colors', 'venues')->toArray());
 
         if (isset($data['theme_colors'])) {
             $wedding->theme_colors = array_merge($wedding->theme_colors ?? [], $data['theme_colors']);
         }
 
+        if (isset($data['venues'])) {
+            $wedding->venues = $data['venues'];
+        }
+
         $wedding->save();
 
-        return response()->json($wedding->only(['theme_colors']));
+        return response()->json($wedding->only(['theme_colors', 'venues']));
     }
 
     public function uploadCover(Request $request, Wedding $wedding)
