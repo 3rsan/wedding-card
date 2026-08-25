@@ -43,6 +43,8 @@ class WeddingSettingsController extends Controller
             'venues.*.name' => ['required_with:venues', 'string', 'max:255'],
             'venues.*.address' => ['required_with:venues', 'string', 'max:500'],
             'venues.*.time' => ['nullable', 'string', 'max:50'],
+            'venues.*.lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'venues.*.lng' => ['nullable', 'numeric', 'between:-180,180'],
         ]);
 
         $wedding->fill(collect($data)->except('theme_colors', 'venues')->toArray());
