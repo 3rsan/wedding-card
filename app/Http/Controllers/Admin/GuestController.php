@@ -140,12 +140,14 @@ class GuestController extends Controller
         ]);
     }
 
-    public function markInviteSent(Request $request, Wedding $wedding, Guest $guest)
+    public function toggleInviteSent(Request $request, Wedding $wedding, Guest $guest)
     {
         $this->authorizeWedding($request, $wedding);
         abort_if($guest->wedding_id !== $wedding->id, 404);
 
-        $guest->update(['invite_sent_at' => now()]);
+        $guest->update([
+            'invite_sent_at' => $guest->invite_sent_at ? null : now(),
+        ]);
 
         return response()->json($guest);
     }
