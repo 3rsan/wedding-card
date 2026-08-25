@@ -139,4 +139,14 @@ class GuestController extends Controller
             'errors' => $errors,
         ]);
     }
+
+    public function markInviteSent(Request $request, Wedding $wedding, Guest $guest)
+    {
+        $this->authorizeWedding($request, $wedding);
+        abort_if($guest->wedding_id !== $wedding->id, 404);
+
+        $guest->update(['invite_sent_at' => now()]);
+
+        return response()->json($guest);
+    }
 }

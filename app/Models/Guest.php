@@ -12,7 +12,11 @@ class Guest extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['wedding_id', 'display_name', 'invite_token', 'max_guests', 'phone'];
+    protected $fillable = ['wedding_id', 'display_name', 'invite_token', 'max_guests', 'phone', 'invite_sent_at'];
+
+    protected $casts = [
+        'invite_sent_at' => 'datetime',
+    ];
 
     protected static function booted(): void
     {
