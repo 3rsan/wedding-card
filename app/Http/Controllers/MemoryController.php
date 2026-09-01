@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Wedding;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\JsonResponse;
 
 class MemoryController extends Controller
 {
@@ -29,6 +30,21 @@ class MemoryController extends Controller
             'message' => ['nullable', 'string', 'max:1000'],
             'media' => ['nullable', 'file', 'max:20480', 'mimes:jpg,jpeg,png,mp4,mov,mp3,m4a'],
         ]);
+
+        if ($request->hasFile('media')) {
+            $currentUsage = $wedding->memories()
+                ->whereNotNull('media_path')
+                ->get()
+                ->sum(fn ($m) => Storage::disk('s3')->size($m->media_path) ?? 0);
+
+            $maxBytes = 500 * 1024 * 1024; // wedding başına 500MB limit
+
+            if ($currentUsage + $request->file('media')->getSize() > $maxBytes) {
+                return response()->json([
+                    'message' => 'Bu düğün için medya depolama limiti doldu.',
+                ], 422);
+            }
+        }
 
         $mediaPath = null;
         $mediaType = null;

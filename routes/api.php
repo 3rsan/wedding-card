@@ -22,6 +22,8 @@ Route::prefix('weddings/{slug}')->group(function () {
     Route::get('/rsvps', [RsvpController::class, 'index']);
     Route::get('/memories', [MemoryController::class, 'index']);
     Route::post('/memories', [MemoryController::class, 'store']);
+    Route::post('/memories', [MemoryController::class, 'store'])
+    ->middleware('throttle:5,60'); // 60 dakikada en fazla 5 istek (aynı IP için)
 });
 
 // R2'deki medyayı backend üzerinden proxy'ler (bkz: .r2.dev domain ISP engeli)
