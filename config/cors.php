@@ -15,6 +15,7 @@ return [
     'allowed_origins' => [
         'http://localhost:5173',
         'https://fluffy-marshmallow-5042a9.netlify.app',
+        'https://mutlugun.net', 'https://www.mutlugun.net',
     ],
 
     'allowed_headers' => ['*'],
